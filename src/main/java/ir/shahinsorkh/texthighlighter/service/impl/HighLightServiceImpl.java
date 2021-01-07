@@ -9,7 +9,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class HighLightServiceImpl implements HighLightService {
@@ -25,4 +28,16 @@ public class HighLightServiceImpl implements HighLightService {
         highLightResponseDTO.setWords(result);
         return highLightResponseDTO;
     }
+
+    @Override
+    public HighLightResponseDTO findByRegEx(HighLightRequestDTO highLightRequestDTO) {
+        log.debug("request to find regular expression : [{}] ", highLightRequestDTO.getPattern());
+        HighLightResponseDTO highLightResponseDTO = new HighLightResponseDTO();
+        String [] strings = highLightRequestDTO.getSource().split(" ");
+        List<String> result = Arrays.stream(strings).filter(s -> Pattern.compile(highLightRequestDTO.getPattern()).matcher(s).find()).collect(Collectors.toList());
+        highLightResponseDTO.setWords(result);
+        return highLightResponseDTO;
+    }
+
+
 }

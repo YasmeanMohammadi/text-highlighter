@@ -28,9 +28,16 @@ public class HighLightResource {
 
 
     @PostMapping("/term-high-lighter")
-    public ResponseEntity<HighLightResponseDTO> TermHighLighter(@Valid @RequestBody HighLightRequestDTO highLightDTO) throws URISyntaxException {
+    public ResponseEntity<HighLightResponseDTO> termHighLighter(@Valid @RequestBody HighLightRequestDTO highLightDTO) throws URISyntaxException {
         log.debug("REST request to highlight a term: [{}]", highLightDTO);
         HighLightResponseDTO responseDTO = highLightService.findSingleTerm(highLightDTO);
+        return ResponseEntity.ok().body(responseDTO);
+    }
+
+    @PostMapping("/regex-high-lighter")
+    public ResponseEntity<HighLightResponseDTO> regexHighLighter(@Valid @RequestBody HighLightRequestDTO highLightDTO) throws URISyntaxException {
+        log.debug("REST request to highlight a regex: [{}]", highLightDTO);
+        HighLightResponseDTO responseDTO = highLightService.findByRegEx(highLightDTO);
         return ResponseEntity.ok().body(responseDTO);
     }
 }
