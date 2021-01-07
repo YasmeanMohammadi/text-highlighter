@@ -26,6 +26,7 @@ public class HighLightServiceImpl implements HighLightService {
         String [] source = highLightRequestDTO.getSource().split(" ");
         List<String> result = Arrays.stream(source).filter(s -> s.contains(highLightRequestDTO.getTerm())).collect(Collectors.toList());
         highLightResponseDTO.setWords(result);
+        log.debug("response to find term [{}] is [{}] ", highLightRequestDTO.getTerm(), highLightResponseDTO);
         return highLightResponseDTO;
     }
 
@@ -36,8 +37,8 @@ public class HighLightServiceImpl implements HighLightService {
         String [] strings = highLightRequestDTO.getSource().split(" ");
         List<String> result = Arrays.stream(strings).filter(s -> Pattern.compile(highLightRequestDTO.getPattern()).matcher(s).find()).collect(Collectors.toList());
         highLightResponseDTO.setWords(result);
+        log.debug("response to find by regular expression [{}] is [{}] ", highLightRequestDTO.getPattern(), highLightResponseDTO);
         return highLightResponseDTO;
     }
-
 
 }
