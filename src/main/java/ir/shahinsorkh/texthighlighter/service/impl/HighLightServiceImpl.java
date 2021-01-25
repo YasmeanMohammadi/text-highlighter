@@ -1,5 +1,7 @@
 package ir.shahinsorkh.texthighlighter.service.impl;
 
+import ir.shahinsorkh.texthighlighter.domain.enumoration.PatternType;
+import ir.shahinsorkh.texthighlighter.repository.PatternRepository;
 import ir.shahinsorkh.texthighlighter.service.HighLightService;
 import ir.shahinsorkh.texthighlighter.service.dto.HighLightRequestDTO;
 import ir.shahinsorkh.texthighlighter.service.dto.HighLightResponseDTO;
@@ -9,7 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -20,6 +24,12 @@ public class HighLightServiceImpl implements HighLightService {
     private String splitRegex;
 
     private final Logger log = LoggerFactory.getLogger(HighLightServiceImpl.class);
+
+    private final PatternRepository patternRepository;
+
+    public HighLightServiceImpl(PatternRepository patternRepository) {
+        this.patternRepository = patternRepository;
+    }
 
     @Override
     public HighLightResponseDTO findSingleTerm(HighLightRequestDTO highLightRequestDTO) {
@@ -36,10 +46,15 @@ public class HighLightServiceImpl implements HighLightService {
     public HighLightResponseDTO findByRegEx(HighLightRequestDTO highLightRequestDTO) {
         log.debug("request to find regular expression : [{}] ", highLightRequestDTO.getPattern());
         HighLightResponseDTO highLightResponseDTO = new HighLightResponseDTO();
+        Map<PatternType, List<String>> wordsByRegex = new HashMap<>();
         String [] strings = highLightRequestDTO.getSource().split(splitRegex);
-        List<String> result = Arrays.stream(strings).filter(s -> Pattern.compile(highLightRequestDTO.getPattern()).matcher(s).find()).collect(Collectors.toList());
-        highLightResponseDTO.setWords(result);
-        log.debug("response to find by regular expression [{}] is [{}] ", highLightRequestDTO.getPattern(), highLightResponseDTO);
+        List<ir.shahinsorkh.texthighlighter.domain.Pattern> patterns = patternRepository.findAll();
+        patterns.parallelStream().forEach(p -> {
+            List<String> result = Arrays.stream(strings).filter(s -> Pattern.compile(p.getRegex()).matcher(s).find()).collect(Collectors.toList());
+            wordsByRegex.put(p.getName(), result);
+        });
+        highLightResponseDTO.setWordsByRegex(wordsByRegex);
+        log.debug("response to find by regular expression is [{}] ", highLightResponseDTO);
         return highLightResponseDTO;
     }
 
