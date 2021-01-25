@@ -36,7 +36,8 @@ public class HighLightServiceImpl implements HighLightService {
         log.debug("request to find term : [{}] ", highLightRequestDTO.getTerm());
         HighLightResponseDTO highLightResponseDTO = new HighLightResponseDTO();
         String [] source = highLightRequestDTO.getSource().split(splitRegex);
-        List<String> result = Arrays.stream(source).filter(s -> s.contains(highLightRequestDTO.getTerm())).collect(Collectors.toList());
+        List<String> result = Arrays.stream(source).filter(s -> s.contains(highLightRequestDTO.getTerm()))
+                .collect(Collectors.toList());
         highLightResponseDTO.setWords(result);
         log.debug("response to find term [{}] is [{}] ", highLightRequestDTO.getTerm(), highLightResponseDTO);
         return highLightResponseDTO;
@@ -44,13 +45,14 @@ public class HighLightServiceImpl implements HighLightService {
 
     @Override
     public HighLightResponseDTO findByRegEx(HighLightRequestDTO highLightRequestDTO) {
-        log.debug("request to find regular expression : [{}] ", highLightRequestDTO.getPattern());
+        log.debug("request to find by regular expressions");
         HighLightResponseDTO highLightResponseDTO = new HighLightResponseDTO();
         Map<PatternType, List<String>> wordsByRegex = new HashMap<>();
         String [] strings = highLightRequestDTO.getSource().split(splitRegex);
         List<ir.shahinsorkh.texthighlighter.domain.Pattern> patterns = patternRepository.findAll();
         patterns.parallelStream().forEach(p -> {
-            List<String> result = Arrays.stream(strings).filter(s -> Pattern.compile(p.getRegex()).matcher(s).find()).collect(Collectors.toList());
+            List<String> result = Arrays.stream(strings).filter(s -> Pattern.compile(p.getRegex()).matcher(s)
+                    .find()).collect(Collectors.toList());
             wordsByRegex.put(p.getName(), result);
         });
         highLightResponseDTO.setWordsByRegex(wordsByRegex);
