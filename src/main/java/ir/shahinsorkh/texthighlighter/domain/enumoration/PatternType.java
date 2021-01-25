@@ -4,5 +4,8 @@ public enum PatternType {
     TERM,
     NUMBER,
     MIX,
-    HELLO
+    HELLO,
+    PREFIX,
+    SUFFIX,
+    
 }
