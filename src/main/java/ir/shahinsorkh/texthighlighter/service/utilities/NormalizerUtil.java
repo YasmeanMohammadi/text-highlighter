@@ -31,6 +31,29 @@ public class NormalizerUtil {
         charMap.put("\r", " "); //tab
     }
 
+    public static String convertCharToNormal(String str){
+        StringBuilder normalString = new StringBuilder(str);
+        for(int i = 0 ; i < normalString.length() ; i++){
+            int finalI = i;
+            charMap.entrySet().stream().forEach(c -> {
+                if (c.getKey().charAt(0) == normalString.charAt(finalI)){
+                    normalString.setCharAt(finalI, c.getValue().charAt(0));
+                }
+            });
+        }
+        return normalString.toString();
+    }
+
+    public static String removeDuplicateChar(String string){
+        StringBuilder normalString = new StringBuilder(string);
+        for(int i = 0 ; i < normalString.length() ; i++) {
+            if(normalString.charAt(i) == normalString.charAt(i-1)){
+                normalString.deleteCharAt(i);
+            }
+        }
+            return normalString.toString();
+    }
+
     /**
      * this method convert numbers in english form to persian one
      * @Param String (english numbers)

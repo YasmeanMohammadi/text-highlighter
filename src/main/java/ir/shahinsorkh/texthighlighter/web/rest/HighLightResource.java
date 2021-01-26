@@ -7,10 +7,7 @@ import ir.shahinsorkh.texthighlighter.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.zalando.problem.Problem;
 import org.zalando.problem.Status;
 
@@ -36,7 +33,8 @@ public class HighLightResource {
     @PostMapping("/term-high-lighter")
     public ResponseEntity<HighLightResponseDTO> termHighLighter(@Valid @RequestBody HighLightRequestDTO highLightDTO) throws URISyntaxException {
         log.debug("REST request to highlight a term: [{}]", highLightDTO);
-        if( highLightDTO.getTerm() == null || highLightDTO.getTerm().isEmpty())
+        if( highLightDTO.getTerm() == null || highLightDTO.getTerm().isEmpty()
+            ||  highLightDTO.getSource() == null || highLightDTO.getSource().isEmpty())
             responseStatus = Status.BAD_REQUEST;
         if (responseStatus.equals(Status.BAD_REQUEST)) {
             throw Problem.builder()
@@ -51,8 +49,8 @@ public class HighLightResource {
 
     @PostMapping("/regex-high-lighter")
     public ResponseEntity<HighLightResponseDTO> regexHighLighter(@Valid @RequestBody HighLightRequestDTO highLightDTO) throws URISyntaxException {
-        log.debug("REST request to highlight a regex: [{}]", highLightDTO);
-        if( highLightDTO.getPattern() == null || highLightDTO.getPattern().isEmpty())
+        log.debug("REST request to highlight by patterns: [{}]", highLightDTO);
+        if( highLightDTO.getSource() == null || highLightDTO.getSource().isEmpty())
             responseStatus = Status.BAD_REQUEST;
         if (responseStatus.equals(Status.BAD_REQUEST)) {
             throw Problem.builder()

@@ -1,7 +1,6 @@
 package ir.shahinsorkh.texthighlighter.service.impl;
 
 import ir.shahinsorkh.texthighlighter.domain.enumoration.PatternType;
-import ir.shahinsorkh.texthighlighter.repository.PatternRepository;
 import ir.shahinsorkh.texthighlighter.service.HighLightService;
 import ir.shahinsorkh.texthighlighter.service.PatternService;
 import ir.shahinsorkh.texthighlighter.service.dto.HighLightRequestDTO;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.SynchronousQueue;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -26,15 +24,19 @@ public class HighLightServiceImpl implements HighLightService {
 
     private final PatternService patternService;
 
-    public HighLightServiceImpl(PatternService patternRepository) {
+    private final PersianNormalizerImpl persianNormalizer;
+
+    public HighLightServiceImpl(PatternService patternRepository, PersianNormalizerImpl persianNormalizer) {
         this.patternService = patternRepository;
+        this.persianNormalizer = persianNormalizer;
     }
 
     @Override
     public HighLightResponseDTO findSingleTerm(HighLightRequestDTO highLightRequestDTO) {
         log.debug("request to find term : [{}] ", highLightRequestDTO.getTerm());
         HighLightResponseDTO highLightResponseDTO = new HighLightResponseDTO();
-        String [] source = highLightRequestDTO.getSource().split(splitRegex);
+        String normalSource = persianNormalizer.normalize(highLightRequestDTO.getSource());
+        String [] source = normalSource.split(splitRegex);
         List<String> result = Arrays.stream(source).filter(s -> s.contains(highLightRequestDTO.getTerm()))
                 .collect(Collectors.toList());
         highLightResponseDTO.setWords(result);
@@ -47,7 +49,8 @@ public class HighLightServiceImpl implements HighLightService {
         log.debug("request to find by regular expressions");
         HighLightResponseDTO highLightResponseDTO = new HighLightResponseDTO();
         Map<PatternType, List<String>> wordsByRegex = new HashMap<>();
-        String [] strings = highLightRequestDTO.getSource().split(splitRegex);
+        String normalSource = persianNormalizer.normalize(highLightRequestDTO.getSource());
+        String [] strings = normalSource.split(splitRegex);
         List<String> list = Collections.synchronizedList(new ArrayList<String>());
         Collections.addAll(list, strings);
         List<ir.shahinsorkh.texthighlighter.domain.Pattern> patterns = patternService.findAll();
