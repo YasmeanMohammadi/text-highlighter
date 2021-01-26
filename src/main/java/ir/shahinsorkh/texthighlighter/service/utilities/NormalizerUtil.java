@@ -1,10 +1,41 @@
 package ir.shahinsorkh.texthighlighter.service.utilities;
 
-import org.apache.lucene.analysis.util.StemmerUtil;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class NormalizerUtil {
+
+    public static final Map<String, String> charMap = new HashMap<>();
+
+    @PostConstruct
+    private void init(){
+        charMap.put("\u064a", "\u06cc"); //yeh
+        charMap.put("\u0649", "\u06cc"); //yeh
+        charMap.put("\u0643", "\u06a9"); //keh
+//        charMap.put("\xa0", ""); //non-break space
+        charMap.put("\u0651", ""); //tashdid
+        charMap.put("\u0652", ""); //sukon
+        charMap.put("\u064b", ""); //fathatan
+        charMap.put("\u064f", ""); //zame
+        charMap.put("\u064e", ""); //fathe
+        charMap.put("\u0650", ""); //kasre
+        charMap.put("\u0640", ""); //keshide
+        charMap.put("\u0623", "\u0627"); //Alef hamza to alef
+        charMap.put("\u200c", " "); //half spaces
+        charMap.put("\u200e", " "); //half spaces
+        charMap.put("\u200f", " "); //half spaces
+        charMap.put("\r", " "); //tab
+    }
+
+    /**
+     * this method convert numbers in english form to persian one
+     * @Param String (english numbers)
+     * @return String (persian numbers)
+     */
     public static String convertEnDigitToFaDigit(String value) {
         return (value == null) ? value : value.replaceAll("0", "\u06F0")
                 .replaceAll("1", "\u06F1").replaceAll("2", "\u06F2").replaceAll("3", "\u06F3")
@@ -12,66 +43,21 @@ public class NormalizerUtil {
                 .replaceAll("7", "\u06F7").replaceAll("8", "\u06F8").replaceAll("9", "\u06F9");
     }
 
-//    public static final char YEH = 'ي';
-//    public static final char FARSI_YEH = 'ی';
-//    public static final char YEH_BARREE = 'ے';
-//    public static final char KEHEH = 'ک';
-//    public static final char KAF = 'ك';
-//    public static final char HAMZA_ABOVE = 'ٔ';
-//    public static final char HEH_YEH = 'ۀ';
-//    public static final char HEH_GOAL = 'ہ';
-//    public static final char HEH = 'ه';
-//
-//    public int charNormalizer(String text) {
-//        for(int i = 0; i < len; ++i) {
-//            switch(s[i]) {
-//                case 'ٔ':
-//                    len = StemmerUtil.delete(s, i, len);
-//                    --i;
-//                    break;
-//                case 'ک':
-//                    s[i] = 1603;
-//                    break;
-//                case 'ۀ':
-//                case 'ہ':
-//                    s[i] = 1607;
-//                    break;
-//                case 'ی':
-//                case 'ے':
-//                    s[i] = 1610;
-//            }
-//        }
-//
-//        return len;
-//    }
-
-//    CHARMAP = str.maketrans(
-//    {'\u064a': '\u06cc',  # yeh
-//        '\u0649': '\u06cc',  # yeh
-//        '\u0643': '\u06a9',  # keh
-//         # '\xa0': ' ', # non-break space
-//        '\u0651': None,  # tashdid
-//        '\u0652': None,  # sukon (gerd)
-//        '\u064b': None,  # fathatan
-//        '\u064f': None,  # oh
-//        '\u064e': None,  # fathe
-//        '\u0650': None,  # kasre
-//        '\u0640': None,  # kashida __
-//        '\u0623': '\u0627',  # Alef hamza to alef
-//         # half spaces'
-//        '\u200c': ' ',
-//            '\u200e': ' ',
-//            '\u200f': ' ',
-//         # bad spaces
-//        '\xa0': ' ',
-//            '\r': None,
-//         # numbers
-//        '۱': '1', '۲': '2', '۳': '3', '۴': '4', '۵': '5', '۶': '6',
-//            '۷': '7', '۸': '8', '۹': '9', '۰': '0',
-//         # punct
-//        '،': ',', '!': '!', '؟': '?', '؛': ';',
-//            '٪': '%', '٬': '\"', 'ـ': '_', '»': '\"',
-//            '«': '\"', '”': '\"', '“': '\"', '‘': '\"',
-//            '’': '\"', '|': None})
+    /**
+     * this method convert punctuation in english form to persian one
+     * @Param String (english punctuation)
+     * @return String (persian punctuation)
+     */
+        public static String convertEnPunToFaPun(String value) {
+        return (value == null) ? value : value.replaceAll(";", "\u06F0")
+                .replaceAll("\\?", "\u061F") //
+                .replaceAll("-", "\u06D4") //
+                .replaceAll("_", "\u06D4") //
+                .replaceAll("%", "\u066A") //
+                .replaceAll("\\|", " ") //
+                .replaceAll("\\.", "\u06F0") //
+                .replaceAll(",", "\u060C") //
+                .replaceAll(";", "\u061B"); //
+    }
 
 }
