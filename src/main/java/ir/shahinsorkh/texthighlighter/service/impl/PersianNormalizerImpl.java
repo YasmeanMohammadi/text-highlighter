@@ -1,8 +1,8 @@
 package ir.shahinsorkh.texthighlighter.service.impl;
 
-import ir.shahinsorkh.texthighlighter.service.PersianNormalizer;
+import org.apache.lucene.analysis.fa.PersianNormalizer;
+
 
 public class PersianNormalizerImpl {
-
 
 }
