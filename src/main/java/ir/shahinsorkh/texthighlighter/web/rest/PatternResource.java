@@ -2,6 +2,7 @@ package ir.shahinsorkh.texthighlighter.web.rest;
 
 import ir.shahinsorkh.texthighlighter.domain.Pattern;
 import ir.shahinsorkh.texthighlighter.repository.PatternRepository;
+import ir.shahinsorkh.texthighlighter.service.PatternService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +20,11 @@ public class PatternResource {
 
     private final Logger log = LoggerFactory.getLogger(PatternResource.class);
 
-    private final PatternRepository patternRepository;
+    private final PatternService patternService;
 
 
-    public PatternResource(PatternRepository patternRepository) {
-        this.patternRepository = patternRepository;
+    public PatternResource(PatternService patternService ) {
+        this.patternService = patternService;
     }
 
     /**
@@ -36,7 +37,7 @@ public class PatternResource {
     @PostMapping("/bank-change-logs")
     public ResponseEntity<Pattern> createBankChangeLog(@Valid @RequestBody Pattern pattern) throws URISyntaxException {
         log.debug("REST request to save pattern : {}", pattern);
-        Pattern result = patternRepository.save(pattern);
+        Pattern result = patternService.save(pattern);
         return ResponseEntity.ok()
                 .body(result);
     }

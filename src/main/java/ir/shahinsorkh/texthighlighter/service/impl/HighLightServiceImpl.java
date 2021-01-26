@@ -3,6 +3,7 @@ package ir.shahinsorkh.texthighlighter.service.impl;
 import ir.shahinsorkh.texthighlighter.domain.enumoration.PatternType;
 import ir.shahinsorkh.texthighlighter.repository.PatternRepository;
 import ir.shahinsorkh.texthighlighter.service.HighLightService;
+import ir.shahinsorkh.texthighlighter.service.PatternService;
 import ir.shahinsorkh.texthighlighter.service.dto.HighLightRequestDTO;
 import ir.shahinsorkh.texthighlighter.service.dto.HighLightResponseDTO;
 import org.slf4j.Logger;
@@ -10,10 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.SynchronousQueue;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -25,10 +24,10 @@ public class HighLightServiceImpl implements HighLightService {
 
     private final Logger log = LoggerFactory.getLogger(HighLightServiceImpl.class);
 
-    private final PatternRepository patternRepository;
+    private final PatternService patternService;
 
-    public HighLightServiceImpl(PatternRepository patternRepository) {
-        this.patternRepository = patternRepository;
+    public HighLightServiceImpl(PatternService patternRepository) {
+        this.patternService = patternRepository;
     }
 
     @Override
@@ -49,9 +48,11 @@ public class HighLightServiceImpl implements HighLightService {
         HighLightResponseDTO highLightResponseDTO = new HighLightResponseDTO();
         Map<PatternType, List<String>> wordsByRegex = new HashMap<>();
         String [] strings = highLightRequestDTO.getSource().split(splitRegex);
-        List<ir.shahinsorkh.texthighlighter.domain.Pattern> patterns = patternRepository.findAll();
+        List<String> list = Collections.synchronizedList(new ArrayList<String>());
+        Collections.addAll(list, strings);
+        List<ir.shahinsorkh.texthighlighter.domain.Pattern> patterns = patternService.findAll();
         patterns.parallelStream().forEach(p -> {
-            List<String> result = Arrays.stream(strings).filter(s -> Pattern.compile(p.getRegex()).matcher(s)
+            List<String> result = list.parallelStream().filter(s -> Pattern.compile(p.getRegex()).matcher(s)
                     .find()).collect(Collectors.toList());
             wordsByRegex.put(p.getName(), result);
         });
