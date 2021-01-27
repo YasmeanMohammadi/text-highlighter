@@ -46,7 +46,7 @@ public class NormalizerUtil {
 
     public static String removeDuplicateChar(String string){
         StringBuilder normalString = new StringBuilder(string);
-        for(int i = 0 ; i < normalString.length() ; i++) {
+        for(int i = 1 ; i < normalString.length() ; i++) {
             if(normalString.charAt(i) == normalString.charAt(i-1)){
                 normalString.deleteCharAt(i);
             }

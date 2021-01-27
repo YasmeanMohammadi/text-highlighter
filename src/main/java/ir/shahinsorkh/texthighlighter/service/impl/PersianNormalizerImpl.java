@@ -2,7 +2,9 @@ package ir.shahinsorkh.texthighlighter.service.impl;
 
 import ir.shahinsorkh.texthighlighter.service.PersianNormalizer;
 import ir.shahinsorkh.texthighlighter.service.utilities.NormalizerUtil;
+import org.springframework.stereotype.Service;
 
+@Service
 public class PersianNormalizerImpl implements PersianNormalizer {
 
     @Override
