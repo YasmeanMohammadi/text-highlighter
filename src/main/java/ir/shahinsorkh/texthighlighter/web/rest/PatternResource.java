@@ -34,7 +34,7 @@ public class PatternResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new bankChangeLogDTO, or with status {@code 400 (Bad Request)} if the bankChangeLog has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/bank-change-logs")
+    @PostMapping("/patterns-log")
     public ResponseEntity<Pattern> createBankChangeLog(@Valid @RequestBody Pattern pattern) throws URISyntaxException {
         log.debug("REST request to save pattern : {}", pattern);
         Pattern result = patternService.save(pattern);
