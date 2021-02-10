@@ -42,7 +42,7 @@ public class TextHighLightingTest {
     public void findSinglePersianTerm() throws Exception {
         HighLightRequestDTO highLightRequestDTO = new HighLightRequestDTO();
         highLightRequestDTO.setTerm("گرا");
-        highLightRequestDTO.setSource("سلااااااااااممم");
+        highLightRequestDTO.setSource("ما برای تمام طبیعت‌گرایانی که دیگران را به اخلاق‌گرا بودن دعوت میکنند و به ما گراییدن احترام قایلیم");
         mockMvc.perform(post("/api/term-high-lighter")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(highLightRequestDTO)))
@@ -56,5 +56,5 @@ public class TextHighLightingTest {
                         "    ]\n" +
                         "}"));
     }
-//ما برای تمام طبیعت‌گرایانی که دیگران را به اخلاق‌گرا بودن دعوت میکنند و به ما گراییدن احترام قایلیم
+
 }
