@@ -5,4 +5,7 @@ import ir.shahinsorkh.texthighlighter.service.dto.HighLightResponseDTO;
 
 public interface HighLightService {
     HighLightResponseDTO findSingleTerm(HighLightRequestDTO highLightRequestDTO);
+
+    HighLightResponseDTO findByRegEx(HighLightRequestDTO highLightRequestDTO);
+
 }

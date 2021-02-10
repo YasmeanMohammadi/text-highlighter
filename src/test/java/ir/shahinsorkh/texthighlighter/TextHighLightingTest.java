@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = { TextHighlighterApplication.class })
@@ -26,7 +27,15 @@ public class TextHighLightingTest {
         mockMvc.perform(post("/api/term-high-lighter")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(highLightRequestDTO)))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\n" +
+                        "    \"words\": [\n" +
+                        "        \"helo\",\n" +
+                        "        \"hel،\",\n" +
+                        "        \"bebehel۰\",\n" +
+                        "        \"bebehel\"\n" +
+                        "    ]\n" +
+                        "}"));
     }
 
     @Test
@@ -37,6 +46,15 @@ public class TextHighLightingTest {
         mockMvc.perform(post("/api/term-high-lighter")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(highLightRequestDTO)))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\n" +
+                        "    \"words\": [\n" +
+                        "        \"گرایانی\",\n" +
+                        "        \"دیگران\",\n" +
+                        "        \"گرا\",\n" +
+                        "        \"گرایدن\"\n" +
+                        "    ]\n" +
+                        "}"));
     }
+
 }

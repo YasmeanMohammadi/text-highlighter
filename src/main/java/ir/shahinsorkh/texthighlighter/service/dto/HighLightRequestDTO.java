@@ -1,10 +1,12 @@
 package ir.shahinsorkh.texthighlighter.service.dto;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
 
 public class HighLightRequestDTO implements Serializable {
 
+    @NotNull
     private String source;
 
     private String term;
