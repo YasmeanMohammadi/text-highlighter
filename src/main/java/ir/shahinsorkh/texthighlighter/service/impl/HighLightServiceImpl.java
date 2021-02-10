@@ -35,9 +35,9 @@ public class HighLightServiceImpl implements HighLightService {
     public HighLightResponseDTO findSingleTerm(HighLightRequestDTO highLightRequestDTO) {
         log.debug("request to find term : [{}] ", highLightRequestDTO.getTerm());
         HighLightResponseDTO highLightResponseDTO = new HighLightResponseDTO();
-        String normalSource = persianNormalizer.normalize(highLightRequestDTO.getSource());
-        String [] source = normalSource.split(splitRegex);
-        List<String> result = Arrays.stream(source).filter(s -> s.contains(highLightRequestDTO.getTerm()))
+//        String normalSource = persianNormalizer.normalize(highLightRequestDTO.getSource());
+        String [] source = highLightRequestDTO.getSource().split(splitRegex);
+        List<String> result = Arrays.stream(source).map(persianNormalizer::normalize).filter(s -> s.contains(highLightRequestDTO.getTerm()))
                 .collect(Collectors.toList());
         highLightResponseDTO.setWords(result);
         log.debug("response to find term [{}] is [{}] ", highLightRequestDTO.getTerm(), highLightResponseDTO);
