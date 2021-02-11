@@ -1,10 +1,9 @@
 package ir.shahinsorkh.texthighlighter.domain.enumoration;
 
 public enum PatternType {
-    TERM1,
-    NUMBER,
-    MIX,
-    HELLO,
-    PREFIX,
-    SUFFIX
+    KHODA_TERM,
+    GERA_TERM,
+    BI_KHODA_TERM,
+    NUMBERS,
+    MIX
 }

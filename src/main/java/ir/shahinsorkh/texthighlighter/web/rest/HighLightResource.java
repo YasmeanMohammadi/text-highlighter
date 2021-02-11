@@ -3,17 +3,15 @@ package ir.shahinsorkh.texthighlighter.web.rest;
 import ir.shahinsorkh.texthighlighter.service.dto.HighLightRequestDTO;
 import ir.shahinsorkh.texthighlighter.service.dto.HighLightResponseDTO;
 import ir.shahinsorkh.texthighlighter.service.impl.HighLightServiceImpl;
-import ir.shahinsorkh.texthighlighter.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.zalando.problem.Problem;
 import org.zalando.problem.Status;
 
 import javax.validation.Valid;
-import java.net.URISyntaxException;
+import java.util.concurrent.atomic.AtomicReference;
 
 @RestController
 @RequestMapping("/api")
@@ -52,7 +50,15 @@ public class HighLightResource {
             responseStatus = Status.BAD_REQUEST;
             return ResponseEntity.status(responseStatus.getStatusCode()).body(null);
         }
+        AtomicReference<Boolean> flag = new AtomicReference<>(false);
         HighLightResponseDTO responseDTO = highLightService.findByRegEx(highLightDTO);
+        responseDTO.getWordsByRegex().entrySet().stream().forEach(w -> {
+            if(w.getValue().size() != 0)
+                flag.set(true);
+        });
+        if(!flag.get()){
+            responseStatus = Status.NOT_FOUND;
+        }
         return ResponseEntity.status(responseStatus.getStatusCode()).body(responseDTO);
     }
 }

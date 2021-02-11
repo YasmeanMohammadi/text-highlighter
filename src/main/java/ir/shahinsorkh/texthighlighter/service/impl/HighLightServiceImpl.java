@@ -52,8 +52,8 @@ public class HighLightServiceImpl implements HighLightService {
         Map<PatternType, List<String>> wordsByRegex = new HashMap<>();
         String [] strings = highLightRequestDTO.getSource().split(splitRegex);
         List<String> list = Collections.synchronizedList(new ArrayList<String>());
-        List<String> normalSource = Collections.synchronizedList(list.parallelStream().map(persianNormalizer::normalize).collect(Collectors.toList()));
         Collections.addAll(list, strings);
+        List<String> normalSource = Collections.synchronizedList(list.parallelStream().map(persianNormalizer::normalize).collect(Collectors.toList()));
         List<ir.shahinsorkh.texthighlighter.domain.Pattern> patterns = patternService.findAll();
         patterns.parallelStream().forEach(p -> {
             List<String> result = normalSource.parallelStream().filter(s -> Pattern.compile(p.getRegex()).matcher(s)
