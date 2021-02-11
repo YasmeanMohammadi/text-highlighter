@@ -30,10 +30,10 @@ public class TextHighLightingTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json("{\n" +
                         "    \"words\": [\n" +
-                        "        \"helo\",\n" +
-                        "        \"hel،\",\n" +
-                        "        \"bebehel۰\",\n" +
-                        "        \"bebehel\"\n" +
+                        "        \"hello\",\n" +
+                        "        \"hel\",\n" +
+                        "        \"bbehel\",\n" +
+                        "        \"bbehel\"\n" +
                         "    ]\n" +
                         "}"));
     }

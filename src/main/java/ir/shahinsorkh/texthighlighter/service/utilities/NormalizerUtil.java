@@ -26,7 +26,7 @@ public class NormalizerUtil {
     }
 
 
-        @PostConstruct
+    @PostConstruct
     private void init(){
         charMap.put("\u064a", "\u06cc"); //yeh
         charMap.put("\u0649", "\u06cc"); //yeh
@@ -46,6 +46,9 @@ public class NormalizerUtil {
         charMap.put("\r", " "); //tab
     }
 
+    /**
+     * this method remove arabic or redundant characters from string
+     */
     public static String convertCharToNormal(String str){
         StringBuilder normalString = new StringBuilder(str);
         for(int i = 0 ; i < normalString.length() ; i++){
@@ -59,6 +62,11 @@ public class NormalizerUtil {
         return normalString.toString();
     }
 
+    /**
+     * this method remove duplicated alphabets from string
+     * @Param string (string with duplicate alphabets)
+     * @return String (string without duplicate alphabets)
+     */
     public static String removeDuplicateChar(String string){
         char[] chars = string.toCharArray();
         List<String> result = new ArrayList<>();
