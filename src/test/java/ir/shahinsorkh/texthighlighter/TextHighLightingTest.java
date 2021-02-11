@@ -57,4 +57,27 @@ public class TextHighLightingTest {
                         "}"));
     }
 
+    @Test
+    public void badRequestSinglePersianTerm() throws Exception {
+        HighLightRequestDTO highLightRequestDTO = new HighLightRequestDTO();
+        highLightRequestDTO.setTerm("");
+        highLightRequestDTO.setSource("");
+        mockMvc.perform(post("/api/term-high-lighter")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(highLightRequestDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void notFoundSinglePersianTerm() throws Exception {
+        HighLightRequestDTO highLightRequestDTO = new HighLightRequestDTO();
+        highLightRequestDTO.setTerm("ما برای تمام طبیعت‌گرایانی که دیگران را به اخلاق‌گرا بودن دعوت میکنند و به ما گراییدن احترام قایلیم");
+        highLightRequestDTO.setSource("اسب");
+        mockMvc.perform(post("/api/term-high-lighter")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(highLightRequestDTO)))
+                .andExpect(status().isNotFound());
+    }
+
+
 }

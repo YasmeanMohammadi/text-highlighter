@@ -1,11 +1,10 @@
 package ir.shahinsorkh.texthighlighter.domain.enumoration;
 
 public enum PatternType {
-    TERM,
+    TERM1,
     NUMBER,
     MIX,
     HELLO,
     PREFIX,
-    SUFFIX,
-    
+    SUFFIX
 }

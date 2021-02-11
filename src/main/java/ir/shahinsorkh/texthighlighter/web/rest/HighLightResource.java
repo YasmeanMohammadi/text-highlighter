@@ -32,33 +32,25 @@ public class HighLightResource {
     private Status responseStatus = Status.OK;
 
     @PostMapping(path = "/term-high-lighter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HighLightResponseDTO> termHighLighter(@Valid @RequestBody HighLightRequestDTO highLightDTO) throws URISyntaxException {
+    public ResponseEntity<HighLightResponseDTO> termHighLighter(@Valid @RequestBody HighLightRequestDTO highLightDTO) {
         log.debug("REST request to highlight a term: [{}]", highLightDTO);
         if( highLightDTO.getTerm() == null || highLightDTO.getTerm().isEmpty()
-            ||  highLightDTO.getSource() == null || highLightDTO.getSource().isEmpty())
+            ||  highLightDTO.getSource() == null || highLightDTO.getSource().isEmpty()) {
             responseStatus = Status.BAD_REQUEST;
-        if (responseStatus.equals(Status.BAD_REQUEST)) {
-            throw Problem.builder()
-                    .withStatus(Status.BAD_REQUEST)
-                    .withTitle("TermIsNullOrEmpty")
-                    .with("error message " , " term can not be null or empty. " + "status: "+ responseStatus.getStatusCode())
-                    .build();
+            return ResponseEntity.status(responseStatus.getStatusCode()).body(null);
         }
         HighLightResponseDTO responseDTO = highLightService.findSingleTerm(highLightDTO);
-        return ResponseEntity.ok().body(responseDTO);
+        if (responseDTO.getWords().size() == 0)
+            responseStatus = Status.NOT_FOUND;
+        return ResponseEntity.status(responseStatus.getStatusCode()).body(responseDTO);
     }
 
     @PostMapping(value = "/regex-high-lighter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HighLightResponseDTO> regexHighLighter(@Valid @RequestBody HighLightRequestDTO highLightDTO) throws URISyntaxException {
+    public ResponseEntity<HighLightResponseDTO> regexHighLighter(@Valid @RequestBody HighLightRequestDTO highLightDTO) {
         log.debug("REST request to highlight by patterns: [{}]", highLightDTO);
-        if( highLightDTO.getSource() == null || highLightDTO.getSource().isEmpty())
+        if( highLightDTO.getSource() == null || highLightDTO.getSource().isEmpty()) {
             responseStatus = Status.BAD_REQUEST;
-        if (responseStatus.equals(Status.BAD_REQUEST)) {
-            throw Problem.builder()
-                    .withStatus(Status.BAD_REQUEST)
-                    .withTitle("PatternIsNullOrEmpty")
-                    .with("error message " , " pattern can not be null or empty. " + "status: "+ responseStatus.getStatusCode())
-                    .build();
+            return ResponseEntity.status(responseStatus.getStatusCode()).body(null);
         }
         HighLightResponseDTO responseDTO = highLightService.findByRegEx(highLightDTO);
         return ResponseEntity.status(responseStatus.getStatusCode()).body(responseDTO);
