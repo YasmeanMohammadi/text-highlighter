@@ -27,11 +27,11 @@ public class HighLightResource {
         this.highLightService = highLightService;
     }
 
-    private Status responseStatus = Status.OK;
 
     @PostMapping(path = "/term-high-lighter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<HighLightResponseDTO> termHighLighter(@Valid @RequestBody HighLightRequestDTO highLightDTO) {
         log.debug("REST request to highlight a term: [{}]", highLightDTO);
+        Status responseStatus = Status.OK;
         if( highLightDTO.getTerm() == null || highLightDTO.getTerm().isEmpty()
             ||  highLightDTO.getSource() == null || highLightDTO.getSource().isEmpty()) {
             responseStatus = Status.BAD_REQUEST;
@@ -46,6 +46,7 @@ public class HighLightResource {
     @PostMapping(value = "/regex-high-lighter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<HighLightResponseDTO> regexHighLighter(@Valid @RequestBody HighLightRequestDTO highLightDTO) {
         log.debug("REST request to highlight by patterns: [{}]", highLightDTO);
+        Status responseStatus = Status.OK;
         if( highLightDTO.getSource() == null || highLightDTO.getSource().isEmpty()) {
             responseStatus = Status.BAD_REQUEST;
             return ResponseEntity.status(responseStatus.getStatusCode()).body(null);

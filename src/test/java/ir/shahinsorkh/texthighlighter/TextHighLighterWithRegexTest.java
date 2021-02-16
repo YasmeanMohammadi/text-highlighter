@@ -2,7 +2,9 @@ package ir.shahinsorkh.texthighlighter;
 
 import ir.shahinsorkh.texthighlighter.domain.Pattern;
 import ir.shahinsorkh.texthighlighter.domain.enumoration.PatternType;
+import ir.shahinsorkh.texthighlighter.repository.PatternRepository;
 import ir.shahinsorkh.texthighlighter.service.dto.HighLightRequestDTO;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,7 +22,12 @@ public class TextHighLighterWithRegexTest {
 
     @Autowired
     private MockMvc mockMvc;
-
+    @Autowired
+    PatternRepository patternRepository;
+    @BeforeEach
+    public void deleteData() {
+        patternRepository.deleteAll();
+    }
     @Test
     public void findRegex() throws Exception {
         HighLightRequestDTO highLightRequestDTO = new HighLightRequestDTO();
@@ -72,11 +79,11 @@ public class TextHighLighterWithRegexTest {
     public void notFoundFindRegex() throws Exception {
         HighLightRequestDTO highLightRequestDTO = new HighLightRequestDTO();
         Pattern khodaPattern = new Pattern();
-        khodaPattern.setName(PatternType.KHODA_TERM);
-        khodaPattern.setRegex("(\\u062E\\u062F\\u0627)");
+        khodaPattern.setName(PatternType.BI_KHODA_TERM);
+        khodaPattern.setRegex("(\\u062E\\u0627)");
         Pattern geraPattern = new Pattern();
         geraPattern.setName(PatternType.GERA_TERM);
-        geraPattern.setRegex("(\\u06AF\\u0631\\u0627)");
+        geraPattern.setRegex("(\\u06AF\\u0627)");
         mockMvc.perform(post("/api/patterns-log")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(geraPattern)))
