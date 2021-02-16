@@ -3,17 +3,15 @@ package ir.shahinsorkh.texthighlighter.web.rest;
 import ir.shahinsorkh.texthighlighter.service.dto.HighLightRequestDTO;
 import ir.shahinsorkh.texthighlighter.service.dto.HighLightResponseDTO;
 import ir.shahinsorkh.texthighlighter.service.impl.HighLightServiceImpl;
-import ir.shahinsorkh.texthighlighter.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.zalando.problem.Problem;
 import org.zalando.problem.Status;
 
 import javax.validation.Valid;
-import java.net.URISyntaxException;
+import java.util.concurrent.atomic.AtomicReference;
 
 @RestController
 @RequestMapping("/api")
@@ -29,38 +27,39 @@ public class HighLightResource {
         this.highLightService = highLightService;
     }
 
-    private Status responseStatus = Status.OK;
 
     @PostMapping(path = "/term-high-lighter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HighLightResponseDTO> termHighLighter(@Valid @RequestBody HighLightRequestDTO highLightDTO) throws URISyntaxException {
+    public ResponseEntity<HighLightResponseDTO> termHighLighter(@Valid @RequestBody HighLightRequestDTO highLightDTO) {
         log.debug("REST request to highlight a term: [{}]", highLightDTO);
+        Status responseStatus = Status.OK;
         if( highLightDTO.getTerm() == null || highLightDTO.getTerm().isEmpty()
-            ||  highLightDTO.getSource() == null || highLightDTO.getSource().isEmpty())
+            ||  highLightDTO.getSource() == null || highLightDTO.getSource().isEmpty()) {
             responseStatus = Status.BAD_REQUEST;
-        if (responseStatus.equals(Status.BAD_REQUEST)) {
-            throw Problem.builder()
-                    .withStatus(Status.BAD_REQUEST)
-                    .withTitle("TermIsNullOrEmpty")
-                    .with("error message " , " term can not be null or empty. " + "status: "+ responseStatus.getStatusCode())
-                    .build();
+            return ResponseEntity.status(responseStatus.getStatusCode()).body(null);
         }
         HighLightResponseDTO responseDTO = highLightService.findSingleTerm(highLightDTO);
-        return ResponseEntity.ok().body(responseDTO);
+        if (responseDTO.getWords().size() == 0)
+            responseStatus = Status.NOT_FOUND;
+        return ResponseEntity.status(responseStatus.getStatusCode()).body(responseDTO);
     }
 
     @PostMapping(value = "/regex-high-lighter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HighLightResponseDTO> regexHighLighter(@Valid @RequestBody HighLightRequestDTO highLightDTO) throws URISyntaxException {
+    public ResponseEntity<HighLightResponseDTO> regexHighLighter(@Valid @RequestBody HighLightRequestDTO highLightDTO) {
         log.debug("REST request to highlight by patterns: [{}]", highLightDTO);
-        if( highLightDTO.getSource() == null || highLightDTO.getSource().isEmpty())
+        Status responseStatus = Status.OK;
+        if( highLightDTO.getSource() == null || highLightDTO.getSource().isEmpty()) {
             responseStatus = Status.BAD_REQUEST;
-        if (responseStatus.equals(Status.BAD_REQUEST)) {
-            throw Problem.builder()
-                    .withStatus(Status.BAD_REQUEST)
-                    .withTitle("PatternIsNullOrEmpty")
-                    .with("error message " , " pattern can not be null or empty. " + "status: "+ responseStatus.getStatusCode())
-                    .build();
+            return ResponseEntity.status(responseStatus.getStatusCode()).body(null);
         }
+        AtomicReference<Boolean> flag = new AtomicReference<>(false);
         HighLightResponseDTO responseDTO = highLightService.findByRegEx(highLightDTO);
+        responseDTO.getWordsByRegex().entrySet().stream().forEach(w -> {
+            if(w.getValue().size() != 0)
+                flag.set(true);
+        });
+        if(!flag.get()){
+            responseStatus = Status.NOT_FOUND;
+        }
         return ResponseEntity.status(responseStatus.getStatusCode()).body(responseDTO);
     }
 }

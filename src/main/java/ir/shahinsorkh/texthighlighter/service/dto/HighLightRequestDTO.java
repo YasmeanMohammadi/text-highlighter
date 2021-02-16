@@ -11,8 +11,6 @@ public class HighLightRequestDTO implements Serializable {
 
     private String term;
 
-    private String pattern;
-
     public String getSource() {
         return source;
     }
@@ -29,27 +27,18 @@ public class HighLightRequestDTO implements Serializable {
         this.term = term;
     }
 
-    public String getPattern() {
-        return pattern;
-    }
-
-    public void setPattern(String pattern) {
-        this.pattern = pattern;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         HighLightRequestDTO highLight1 = (HighLightRequestDTO) o;
         return Objects.equals(source, highLight1.source) &&
-                Objects.equals(term, highLight1.term) &&
-                Objects.equals(pattern, highLight1.pattern);
+                Objects.equals(term, highLight1.term);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(source, term, pattern);
+        return Objects.hash(source, term);
     }
 
     @Override
@@ -57,7 +46,6 @@ public class HighLightRequestDTO implements Serializable {
         return "Term{" +
                 "source='" + source + '\'' +
                 ", term='" + term + '\'' +
-                ", pattern='" + pattern + '\'' +
                 '}';
     }
 }

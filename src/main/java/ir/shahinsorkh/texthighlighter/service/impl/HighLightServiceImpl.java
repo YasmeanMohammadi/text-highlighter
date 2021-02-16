@@ -35,9 +35,10 @@ public class HighLightServiceImpl implements HighLightService {
     public HighLightResponseDTO findSingleTerm(HighLightRequestDTO highLightRequestDTO) {
         log.debug("request to find term : [{}] ", highLightRequestDTO.getTerm());
         HighLightResponseDTO highLightResponseDTO = new HighLightResponseDTO();
-        String normalSource = persianNormalizer.normalize(highLightRequestDTO.getSource());
-        String [] source = normalSource.split(splitRegex);
-        List<String> result = Arrays.stream(source).filter(s -> s.contains(highLightRequestDTO.getTerm()))
+        String [] source = highLightRequestDTO.getSource().split(splitRegex);
+        List<String> list = Collections.synchronizedList(new ArrayList<String>());
+        Collections.addAll(list, source);
+        List<String> result = list.parallelStream().map(persianNormalizer::normalize).filter(s -> s.contains(highLightRequestDTO.getTerm()))
                 .collect(Collectors.toList());
         highLightResponseDTO.setWords(result);
         log.debug("response to find term [{}] is [{}] ", highLightRequestDTO.getTerm(), highLightResponseDTO);
@@ -49,13 +50,13 @@ public class HighLightServiceImpl implements HighLightService {
         log.debug("request to find by regular expressions");
         HighLightResponseDTO highLightResponseDTO = new HighLightResponseDTO();
         Map<PatternType, List<String>> wordsByRegex = new HashMap<>();
-        String normalSource = persianNormalizer.normalize(highLightRequestDTO.getSource());
-        String [] strings = normalSource.split(splitRegex);
+        String [] strings = highLightRequestDTO.getSource().split(splitRegex);
         List<String> list = Collections.synchronizedList(new ArrayList<String>());
         Collections.addAll(list, strings);
+        List<String> normalSource = Collections.synchronizedList(list.parallelStream().map(persianNormalizer::normalize).collect(Collectors.toList()));
         List<ir.shahinsorkh.texthighlighter.domain.Pattern> patterns = patternService.findAll();
         patterns.parallelStream().forEach(p -> {
-            List<String> result = list.parallelStream().filter(s -> Pattern.compile(p.getRegex()).matcher(s)
+            List<String> result = normalSource.parallelStream().filter(s -> Pattern.compile(p.getRegex()).matcher(s)
                     .find()).collect(Collectors.toList());
             wordsByRegex.put(p.getName(), result);
         });

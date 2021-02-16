@@ -1,5 +1,6 @@
 package ir.shahinsorkh.texthighlighter.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ir.shahinsorkh.texthighlighter.domain.enumoration.PatternType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -12,6 +13,7 @@ import javax.persistence.*;
 public class Pattern {
     private static final long serialVersionUID = 1L;
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

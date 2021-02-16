@@ -3,13 +3,28 @@ package ir.shahinsorkh.texthighlighter.service.utilities;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Component
 public class NormalizerUtil {
 
     public static final Map<String, String> charMap = new HashMap<>();
+    public static final Map<String, String> wordMap = new HashMap<>();
+
+    @PostConstruct
+    private void wordInit(){
+        wordMap.put("سسلام", "سلام");
+        wordMap.put("سلاام", "سلام");
+        wordMap.put("سلامم", "سلام");
+        wordMap.put("سلاامم", "سلام");
+        wordMap.put("سسلاامم", "سلام");
+        wordMap.put("سسلامم", "سلام");
+    }
+
 
     @PostConstruct
     private void init(){
@@ -31,6 +46,9 @@ public class NormalizerUtil {
         charMap.put("\r", " "); //tab
     }
 
+    /**
+     * this method remove arabic or redundant characters from string
+     */
     public static String convertCharToNormal(String str){
         StringBuilder normalString = new StringBuilder(str);
         for(int i = 0 ; i < normalString.length() ; i++){
@@ -44,14 +62,38 @@ public class NormalizerUtil {
         return normalString.toString();
     }
 
+    /**
+     * this method remove duplicated alphabets from string
+     * @Param string (string with duplicate alphabets)
+     * @return String (string without duplicate alphabets)
+     */
     public static String removeDuplicateChar(String string){
-        StringBuilder normalString = new StringBuilder(string);
-        for(int i = 1 ; i < normalString.length() ; i++) {
-            if(normalString.charAt(i) == normalString.charAt(i-1)){
-                normalString.deleteCharAt(i);
+        char[] chars = string.toCharArray();
+        List<String> result = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        boolean repeatedChar;
+        for (int i = 0; i < chars.length; i++) {
+            repeatedChar = false;
+            for (int j = i + 1; j < chars.length; j++) {
+                for (int h = j +1 ; h < chars.length; h++) {
+                    if (chars[i] == chars[j] && chars[j]== chars[h]) {
+                        repeatedChar = true;
+                        break;
+                    }
+                }
+            }
+            if (!repeatedChar) {
+                sb.append(chars[i]);
             }
         }
-            return normalString.toString();
+        wordMap.entrySet().stream().forEach(w -> {
+            if (w.getKey().equals(sb.toString())){
+                result.add(w.getValue());
+            }
+        });
+        if (result.size() != 0)
+            return result.get(0);
+        return sb.toString();
     }
 
     /**

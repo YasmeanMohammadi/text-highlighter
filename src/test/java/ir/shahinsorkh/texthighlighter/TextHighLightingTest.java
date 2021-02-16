@@ -30,10 +30,10 @@ public class TextHighLightingTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json("{\n" +
                         "    \"words\": [\n" +
-                        "        \"helo\",\n" +
-                        "        \"hel،\",\n" +
-                        "        \"bebehel۰\",\n" +
-                        "        \"bebehel\"\n" +
+                        "        \"hello\",\n" +
+                        "        \"hel\",\n" +
+                        "        \"bbehel\",\n" +
+                        "        \"bbehel\"\n" +
                         "    ]\n" +
                         "}"));
     }
@@ -42,19 +42,42 @@ public class TextHighLightingTest {
     public void findSinglePersianTerm() throws Exception {
         HighLightRequestDTO highLightRequestDTO = new HighLightRequestDTO();
         highLightRequestDTO.setTerm("گرا");
-        highLightRequestDTO.setSource("ما برای تمام طبیعت‌گرایانی که دیگران را اخلاق‌گرا بودن دعوت میکنند و به ما گراییدن احترام قایلیم");
+        highLightRequestDTO.setSource("ما برای تمام طبیعت‌گرایانی که دیگران را به اخلاق‌گرا بودن دعوت میکنند و به ما گراییدن احترام قایلیم");
         mockMvc.perform(post("/api/term-high-lighter")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(highLightRequestDTO)))
                 .andExpect(status().isOk())
                 .andExpect(content().json("{\n" +
                         "    \"words\": [\n" +
-                        "        \"گرایانی\",\n" +
+                        "        \"طبعت گرایانی\",\n" +
                         "        \"دیگران\",\n" +
-                        "        \"گرا\",\n" +
-                        "        \"گرایدن\"\n" +
+                        "        \"خلاق گرا\",\n" +
+                        "        \"گراییدن\"\n" +
                         "    ]\n" +
                         "}"));
     }
+
+    @Test
+    public void badRequestSinglePersianTerm() throws Exception {
+        HighLightRequestDTO highLightRequestDTO = new HighLightRequestDTO();
+        highLightRequestDTO.setTerm("");
+        highLightRequestDTO.setSource("");
+        mockMvc.perform(post("/api/term-high-lighter")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(highLightRequestDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void notFoundSinglePersianTerm() throws Exception {
+        HighLightRequestDTO highLightRequestDTO = new HighLightRequestDTO();
+        highLightRequestDTO.setTerm("ما برای تمام طبیعت‌گرایانی که دیگران را به اخلاق‌گرا بودن دعوت میکنند و به ما گراییدن احترام قایلیم");
+        highLightRequestDTO.setSource("اسب");
+        mockMvc.perform(post("/api/term-high-lighter")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(highLightRequestDTO)))
+                .andExpect(status().isNotFound());
+    }
+
 
 }
