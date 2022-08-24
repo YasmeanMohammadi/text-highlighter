@@ -102,10 +102,10 @@ public class NormalizerUtil {
      * @return String (persian numbers)
      */
     public static String convertEnDigitToFaDigit(String value) {
-        return (value == null) ? value : value.replaceAll("0", "\u06F0")
-                .replaceAll("1", "\u06F1").replaceAll("2", "\u06F2").replaceAll("3", "\u06F3")
-                .replaceAll("4", "\u06F4").replaceAll("5", "\u06F5").replaceAll("6", "\u06F6")
-                .replaceAll("7", "\u06F7").replaceAll("8", "\u06F8").replaceAll("9", "\u06F9");
+        return (value == null) ? value : value.replace("0", "\u06F0")
+                .replace("1", "\u06F1").replace("2", "\u06F2").replace("3", "\u06F3")
+                .replace("4", "\u06F4").replace("5", "\u06F5").replace("6", "\u06F6")
+                .replace("7", "\u06F7").replace("8", "\u06F8").replace("9", "\u06F9");
     }
 
     /**
@@ -114,15 +114,15 @@ public class NormalizerUtil {
      * @return String (persian punctuation)
      */
         public static String convertEnPunToFaPun(String value) {
-        return (value == null) ? value : value.replaceAll(";", "\u06F0")
-                .replaceAll("\\?", "\u061F") //
-                .replaceAll("-", "\u06D4") //
-                .replaceAll("_", "\u06D4") //
-                .replaceAll("%", "\u066A") //
-                .replaceAll("\\|", " ") //
-                .replaceAll("\\.", "\u06F0") //
-                .replaceAll(",", "\u060C") //
-                .replaceAll(";", "\u061B"); //
+        return (value == null) ? value : value.replace(";", "\u06F0")
+                .replace("\\?", "\u061F") //
+                .replace("-", "\u06D4") //
+                .replace("_", "\u06D4") //
+                .replace("%", "\u066A") //
+                .replace("\\|", " ") //
+                .replace("\\.", "\u06F0") //
+                .replace(",", "\u060C") //
+                .replace(";", "\u061B"); //
     }
 
 }
